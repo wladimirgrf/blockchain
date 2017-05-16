@@ -1,0 +1,13 @@
+**/target
+*/target/**
+*/target/*
+**/classes
+########## InteliJ IDEA ##########
+**.iml
+########## Eclipse IDEA ##########
+.settings
+.classpath
+.project
+.metadata
+########## MAC OS ##########
+**.DS_Store
