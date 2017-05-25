@@ -1,21 +1,13 @@
 package com.blockchain.api;
 
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
-import info.blockchain.api.HttpClient;
 
-public class Wallet {
-	
-	private final static Logger logger = Logger.getLogger(Wallet.class);
-	
-	private static final String serviceURL = "http://localhost:3000/";
+public class Wallet {	
+	private final static Service service = Service.getInstance();
 	
 	private static Wallet instance;
 	
@@ -25,8 +17,7 @@ public class Wallet {
 		JsonObject teste = balance("c7d41c0a-1e60-4a62-8826-23992bc2d2c7", "123");
 		System.out.println(teste);
 		System.out.println("teste");
-		
-		//boolean reachable = InetAddress.getByName(serviceURL).isReachable(2000);
+	
 	}
 	
 	private Wallet() {}
@@ -62,31 +53,15 @@ public class Wallet {
 		if (email != null) {
 			params.put("email", email);
 		}
-
-		String response = null;
-		JsonObject jsonObj = null;
 		
-		try {
-			response = HttpClient.getInstance().post(serviceURL, "api/v2/create", params);
-			jsonObj = new JsonParser().parse(response).getAsJsonObject();
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return jsonObj;
+		return service.post("api/v2/create", params);
 	}
 	
 	public static JsonObject balance (String guid, String password) {
 		Map<String, String> params = new HashMap<String, String>();
-		String response    = null;
-		JsonObject jsonObj = null;
 		params.put("password", password);
-		try {
-			String uri = String.format("merchant/%s/balance", guid);
-			response = HttpClient.getInstance().get(serviceURL, uri, params);
-			jsonObj = new JsonParser().parse(response).getAsJsonObject();
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		} 
-		return jsonObj;
+		
+		String uri = String.format("merchant/%s/balance", guid);
+		return service.get(uri, params);
     }
 }
