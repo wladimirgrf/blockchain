@@ -1,5 +1,6 @@
 package com.blockchain.security;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import java.util.Arrays;
@@ -12,44 +13,58 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.log4j.Logger;
 
+import com.google.gson.JsonObject;
+
 
 public class Secret {
 	private final static Logger logger = Logger.getLogger(Secret.class);
 
     private static final String ALGORITHM = "AES";
-   
-    private static BKey bKey;
 
-    public static void main(String[] args) {
-    	String text = "KwrtihoX18TKbK1gStHUYpMTzXJLNY3Sgxs3LVRDDkDX2dEAGRST";
-    	
-    	//byte[] ct = encrypt(text);
-    	
-    	//System.out.println(ct);
 
-    	//String dec = decrypt(ct, k);    	
+    public static void main(String[] args) throws Exception {
+    	String text = "KwrtihoX18TKbK1gStWladimirgxs3LVRDDkDX2dEAGRST";
     	
-    	//System.out.println(dec);
+    	JsonObject jo = encrypt(text);
     	
-
-    	byte[] teste = "1".getBytes();
+    	String t = jo.get("cipher_text").getAsString();
+    	 
+    	 System.out.println("enc text:" + t);
     	
-    	System.out.println(new String(teste));
+    	
+    	System.out.println("dec text: " + decrypt(t,jo.get("blockchain_key").getAsInt()));
     }
     
-    public static byte[] encrypt(String text) {
-    	bKey = getBKey(0);
+    public static JsonObject encrypt(String text) {
+    	BKey bKey = getBKey(0);
     	byte[] encryptionKey = bKey.getValue().getBytes(StandardCharsets.UTF_8);
     	byte[] plainText     = text.getBytes(StandardCharsets.UTF_8);
     	
-    	return exec(Cipher.ENCRYPT_MODE, plainText, encryptionKey);
+    	byte[] cipherByte = exec(Cipher.ENCRYPT_MODE, plainText, encryptionKey);
+    	
+    	JsonObject jsonObj = null;
+    	try { 	
+    		String cipherText = new String(cipherByte, "ISO-8859-1");
+    		
+    		jsonObj = new JsonObject();
+    		jsonObj.addProperty("cipher_text",    cipherText);
+        	jsonObj.addProperty("blockchain_key", bKey.getKey());
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e.getMessage());
+		}
+    	return jsonObj;
     }
 
-    public static String decrypt(byte[] text, int key) {  
-    	bKey = getBKey(key);
-    	byte[] encryptionKey = bKey.getValue().getBytes(StandardCharsets.UTF_8);
-    	
-    	return new String(exec(Cipher.DECRYPT_MODE, text, encryptionKey));
+    public static String decrypt(String text, int key) {  
+    	BKey bKey = getBKey(key);
+		try {
+			byte[] cipherText = text.getBytes("ISO-8859-1");
+			byte[] encryptionKey = bKey.getValue().getBytes(StandardCharsets.UTF_8);
+			return new String(exec(Cipher.DECRYPT_MODE, cipherText, encryptionKey));
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e.getMessage());
+		} 
+    	return null;
     }
     
     private static byte[] exec(int mode, byte[] text, byte[] key) {
@@ -67,10 +82,10 @@ public class Secret {
     }
 
 	private static BKey getBKey(int key){
-		if(key <= 0 || key > BKey.values().length){
-			List<BKey> keys = Collections.unmodifiableList(Arrays.asList(BKey.values()));
-			return keys.get(new Random().nextInt(keys.size()));
+		if(key > 0 && key <= BKey.values().length){
+			return BKey.getByKey(key);
 		}
-		return BKey.getByKey(key);
+		List<BKey> keys = Collections.unmodifiableList(Arrays.asList(BKey.values()));
+		return keys.get(new Random().nextInt(keys.size()));
 	}
 }
