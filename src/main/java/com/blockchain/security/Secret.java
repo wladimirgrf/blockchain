@@ -20,20 +20,7 @@ public class Secret {
 	private final static Logger logger = Logger.getLogger(Secret.class);
 
     private static final String ALGORITHM = "AES";
-
-
-    public static void main(String[] args) throws Exception {
-    	String text = "KwrtihoX18TKbK1gStWladimirgxs3LVRDDkDX2dEAGRST";
-    	
-    	JsonObject jo = encrypt(text);
-    	
-    	String t = jo.get("cipher_text").getAsString();
-    	 
-    	 System.out.println("enc text:" + t);
-    	
-    	
-    	System.out.println("dec text: " + decrypt(t,jo.get("blockchain_key").getAsInt()));
-    }
+    
     
     public static JsonObject encrypt(String text) {
     	BKey bKey = getBKey(0);
