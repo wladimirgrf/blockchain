@@ -21,6 +21,23 @@ public class Secret {
 
     private static final String ALGORITHM = "AES";
     
+    private static final String CHARSET = "ISO-8859-1";
+    
+    private static Secret instance;
+    
+	private Secret() {}
+	
+	public static Secret getInstance() {
+		if (instance != null) {
+			return instance;
+		}
+		synchronized (Secret.class) {
+			if (instance == null) {
+				instance = new Secret();
+			}
+		}
+		return instance;
+	}
     
     public static JsonObject encrypt(String text) {
     	BKey bKey = getBKey(0);
@@ -31,7 +48,7 @@ public class Secret {
     	
     	JsonObject jsonObj = null;
     	try { 	
-    		String cipherText = new String(cipherByte, "ISO-8859-1");
+    		String cipherText = new String(cipherByte, CHARSET);
     		
     		jsonObj = new JsonObject();
     		jsonObj.addProperty("cipher_text",    cipherText);
@@ -45,7 +62,7 @@ public class Secret {
     public static String decrypt(String text, int key) {  
     	BKey bKey = getBKey(key);
 		try {
-			byte[] cipherText = text.getBytes("ISO-8859-1");
+			byte[] cipherText = text.getBytes(CHARSET);
 			byte[] encryptionKey = bKey.getValue().getBytes(StandardCharsets.UTF_8);
 			return new String(exec(Cipher.DECRYPT_MODE, cipherText, encryptionKey));
 		} catch (UnsupportedEncodingException e) {
