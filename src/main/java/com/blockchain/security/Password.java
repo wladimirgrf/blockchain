@@ -8,27 +8,13 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 
 public class Password {
-	private final static Logger logger = Logger.getLogger(Secret.class);
+	private final static Logger logger = Logger.getLogger(Password.class);
 	
 	private final static String salt = "!@#block[$^";
 	
 	private static final String ALGORITHM = "MD5";
-	
-	private static Password instance;
 
 	private Password() {}
-
-	public static Password getInstance() {
-		if (instance != null) {
-			return instance;
-		}
-		synchronized (Password.class) {
-			if (instance == null) {
-				instance = new Password();
-			}
-		}
-		return instance;
-	}
 	
 	public static String create() {
         String password = String.format("%s%s%s", new Date(), salt, new Random().nextInt(99777));

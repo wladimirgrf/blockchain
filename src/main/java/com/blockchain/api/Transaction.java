@@ -9,33 +9,17 @@ import com.google.gson.JsonObject;
 
 
 public class Transaction {
-	private final static Service service = Service.getInstance();
 	
-	private static Transaction instance;
+	private Transaction() { }
 	
-	
-	private Transaction() {}
-	
-	public static Transaction getInstance() {
-		if (instance != null) {
-			return instance;
-		}
-		synchronized (Transaction.class) {
-			if (instance == null) {
-				instance = new Transaction();
-			}
-		}
-		return instance;
-	}
-	
-    public JsonObject send (String guid, String password, String toAddress, long amount, String fromAddress, Long fee, String note) {
+    public static JsonObject send (String guid, String password, String toAddress, long amount, String fromAddress, Long fee, String note) {
         Map<String, Long> recipient = new HashMap<String, Long>();
         recipient.put(toAddress, amount);
 
         return sendMany(guid, password, recipient, fromAddress, fee, note);
     }
 
-    public JsonObject sendMany (String guid, String password, Map<String, Long> recipients, String fromAddress, Long fee, String note) {
+    public static JsonObject sendMany (String guid, String password, Map<String, Long> recipients, String fromAddress, Long fee, String note) {
     	Map<String, String> params = new HashMap<String, String>();
 
 		params.put("password", password);
@@ -63,6 +47,6 @@ public class Transaction {
         }        
         
         String uri = String.format("merchant/%s/%s", guid, method);
-        return service.post(uri, params);
+        return Service.post(uri, params);
     }
 }

@@ -2,12 +2,10 @@ package com.blockchain.security;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -23,36 +21,19 @@ public class Secret {
     
     private static final String CHARSET = "ISO-8859-1";
     
-    private static Secret instance;
-    
-	private Secret() {}
+	private Secret() { }
 	
-	public static Secret getInstance() {
-		if (instance != null) {
-			return instance;
-		}
-		synchronized (Secret.class) {
-			if (instance == null) {
-				instance = new Secret();
-			}
-		}
-		return instance;
-	}
     
     public static JsonObject encrypt(String text) {
     	BKey bKey = getBKey(0);
-    	byte[] encryptionKey = bKey.getValue().getBytes(StandardCharsets.UTF_8);
-    	byte[] plainText     = text.getBytes(StandardCharsets.UTF_8);
-    	
-    	byte[] cipherByte = exec(Cipher.ENCRYPT_MODE, plainText, encryptionKey);
-    	
+    	byte[] plainText = text.getBytes(StandardCharsets.UTF_8);
+    	byte[] cipherByte = exec(Cipher.ENCRYPT_MODE, plainText, bKey);
     	JsonObject jsonObj = null;
     	try { 	
     		String cipherText = new String(cipherByte, CHARSET);
-    		
     		jsonObj = new JsonObject();
-    		jsonObj.addProperty("cipher_text",    cipherText);
-        	jsonObj.addProperty("blockchain_key", bKey.getKey());
+    		jsonObj.addProperty("cipher_text", cipherText);
+        	jsonObj.addProperty("key", bKey.getKey());
 		} catch (UnsupportedEncodingException e) {
 			logger.error(e.getMessage());
 		}
@@ -61,23 +42,22 @@ public class Secret {
 
     public static String decrypt(String text, int key) {  
     	BKey bKey = getBKey(key);
+    	byte[] cipherText;
 		try {
-			byte[] cipherText = text.getBytes(CHARSET);
-			byte[] encryptionKey = bKey.getValue().getBytes(StandardCharsets.UTF_8);
-			return new String(exec(Cipher.DECRYPT_MODE, cipherText, encryptionKey));
+			cipherText = text.getBytes(CHARSET);
+			return new String(exec(Cipher.DECRYPT_MODE, cipherText, bKey));
 		} catch (UnsupportedEncodingException e) {
 			logger.error(e.getMessage());
-		} 
-    	return null;
+		}
+		return null;
     }
     
-    private static byte[] exec(int mode, byte[] text, byte[] key) {
+    private static byte[] exec(int mode, byte[] text, BKey bKey) {
     	try{
-    		Cipher cipher = Cipher.getInstance(ALGORITHM);
-	    	SecretKeySpec secretKey = new SecretKeySpec(key, ALGORITHM);
-	    	
+    		Cipher cipher 	 = Cipher.getInstance(ALGORITHM);
+    		byte[] encryptionKey 	= bKey.getValue().getBytes(StandardCharsets.UTF_8);
+	    	SecretKeySpec secretKey = new SecretKeySpec(encryptionKey, ALGORITHM);
 	    	cipher.init(mode, secretKey);
-	    	
 	    	return cipher.doFinal(text);
     	} catch (Exception e) {
     		logger.error(e.getMessage());

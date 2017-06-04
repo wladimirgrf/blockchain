@@ -17,23 +17,9 @@ public class Service {
 	
 	private final static JsonParser jsonParser = new JsonParser();
 	
-	private static Service instance;
+	private Service() { }
 	
-	private Service() {}
-	
-	public static Service getInstance() {
-		if (instance != null) {
-			return instance;
-		}
-		synchronized (Service.class) {
-			if (instance == null) {
-				instance = new Service();
-			}
-		}
-		return instance;
-	}
-	
-	protected JsonObject post(String uri, Map<String, String> params){
+	static JsonObject post(String uri, Map<String, String> params){
 		String response = null;
 		try {
 			response = HttpClient.getInstance().post(serviceURL, uri, params);
@@ -44,7 +30,7 @@ public class Service {
         return null;
 	}
 	
-	protected JsonObject get(String uri, Map<String, String> params){
+	static JsonObject get(String uri, Map<String, String> params){
 		String response = null;
 		try {
 			response = HttpClient.getInstance().get(serviceURL, uri, params);
