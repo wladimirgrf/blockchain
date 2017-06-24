@@ -11,3 +11,4 @@
 .metadata
 ########## MAC OS ##########
 **.DS_Store
+/restore-from-seed.spvchain
