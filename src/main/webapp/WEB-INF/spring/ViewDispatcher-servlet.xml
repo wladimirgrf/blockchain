@@ -15,5 +15,7 @@
 	<mvc:annotation-driven />
 	<mvc:default-servlet-handler/>
 	
+	<mvc:resources location="/WEB-INF/css/" mapping="/css/**"/>
+	
 	<context:component-scan base-package="btc.blockchain.controller"/>	
 </beans:beans>

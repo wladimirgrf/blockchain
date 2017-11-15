@@ -9,7 +9,6 @@ import com.google.gson.JsonObject;
 
 public class Transaction {
 
-
 	private Transaction() { }
 
 	public static JsonObject send (String guid, String password, String toAddress, long amount, String fromAddress, Long fee, String note) {

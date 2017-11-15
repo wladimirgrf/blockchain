@@ -26,16 +26,21 @@ public class Secret {
 	private static final String CHARSET = "ISO-8859-1";
 
 	private Secret() { }
+	
+	private static byte[] exec(int mode, byte[] text, BKey bKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		Cipher cipher 	 = Cipher.getInstance(ALGORITHM);
+		byte[] encryptionKey = Base64.decodeBase64(bKey.getValue());
+		SecretKeySpec secretKey = new SecretKeySpec(encryptionKey, ALGORITHM);
+		cipher.init(mode, secretKey);
+		return cipher.doFinal(text);
+	}
 
-	public static void main(String[] args) {
-		JsonObject enc = encrypt("KyotvhGiw1KwDY9ftaTmx6ugk833f6euExXFBMReq6Q2xFkJwbwx");
-		System.out.println(enc);
-		
-		String v1 = enc.get("cipher_text").toString();
-		
-		Integer v2 = enc.get("key").getAsInt();
-		
-		System.out.println(decrypt(v1, v2));
+	private static BKey getBKey(int key){
+		if(key > 0 && key <= BKey.values().length){
+			return BKey.getByKey(key);
+		}
+		List<BKey> keys = Collections.unmodifiableList(Arrays.asList(BKey.values()));
+		return keys.get(new Random().nextInt(keys.size()));
 	}
 
 	public static JsonObject encrypt(String text) {
@@ -65,21 +70,5 @@ public class Secret {
 			jsonObj.addProperty("error", e.toString());
 		}
 		return jsonObj;
-	}
-
-	private static byte[] exec(int mode, byte[] text, BKey bKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException  {
-		Cipher cipher 	 = Cipher.getInstance(ALGORITHM);
-		byte[] encryptionKey = Base64.decodeBase64(bKey.getValue());
-		SecretKeySpec secretKey = new SecretKeySpec(encryptionKey, ALGORITHM);
-		cipher.init(mode, secretKey);
-		return cipher.doFinal(text);
-	}
-
-	private static BKey getBKey(int key){
-		if(key > 0 && key <= BKey.values().length){
-			return BKey.getByKey(key);
-		}
-		List<BKey> keys = Collections.unmodifiableList(Arrays.asList(BKey.values()));
-		return keys.get(new Random().nextInt(keys.size()));
 	}
 }

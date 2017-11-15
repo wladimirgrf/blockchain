@@ -21,7 +21,8 @@ public class Service {
 			String response = HttpClient.getInstance().post(serviceURL, uri, params);
 			jsonObj = jsonParser.parse(response).getAsJsonObject();
 		} catch (Exception e) {
-			jsonObj.addProperty("error", e.getMessage());
+			JsonObject error = jsonParser.parse(e.getMessage()).getAsJsonObject();
+			jsonObj.addProperty("error", error.get("error").getAsString());
 		} 
 		return jsonObj;
 	}
@@ -32,7 +33,8 @@ public class Service {
 			String response = HttpClient.getInstance().get(serviceURL, uri, params);
 			jsonObj = jsonParser.parse(response).getAsJsonObject();
 		} catch (Exception e) {
-			jsonObj.addProperty("error", e.getMessage());
+			JsonObject error = jsonParser.parse(e.getMessage()).getAsJsonObject();
+			jsonObj.addProperty("error", error.get("error").getAsString());
 		} 
 		return jsonObj;
 	}
