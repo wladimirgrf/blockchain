@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+		
+	<beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<beans:property name="location">
+			<beans:value>/WEB-INF/spring/config/dataSource.#{systemProperties['running-context']}.properties</beans:value>
+		</beans:property>
+	</beans:bean>
+	
+	<beans:bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+ 		<beans:property name="acquireIncrement" value="${c3p0.acquireIncrement}"/>
+ 		<beans:property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}"/>
+ 		<beans:property name="acquireRetryDelay" value="${c3p0.acquireRetryDelay}"/>
+ 		<beans:property name="debugUnreturnedConnectionStackTraces" value="${c3p0.debugUnreturnedConnectionStackTraces}"/>
+ 		<beans:property name="driverClass" value="${c3p0.driverClass}"/>
+ 		<beans:property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}"/>
+ 		<beans:property name="initialPoolSize" value="${c3p0.initialPoolSize}"/>
+ 		<beans:property name="maxIdleTime" value="${c3p0.maxIdleTime}"/>
+ 		<beans:property name="maxIdleTimeExcessConnections" value="${c3p0.maxIdleTimeExcessConnections}"/>
+ 		<beans:property name="maxPoolSize" value="${c3p0.maxPoolSize}"/>
+ 		<beans:property name="minPoolSize" value="${c3p0.minPoolSize}"/>
+ 		<beans:property name="numHelperThreads" value="${c3p0.numHelperThreads}"/>
+ 		<beans:property name="preferredTestQuery" value="${c3p0.preferredTestQuery}"/>
+ 		<beans:property name="testConnectionOnCheckin" value="${c3p0.testConnectionOnCheckin}"/>
+ 		<beans:property name="jdbcUrl" value="${jdbc.url}"/>
+ 		<beans:property name="user" value="${jdbc.user}"/>
+ 		<beans:property name="password" value="${jdbc.password}"/> 		 	
+	</beans:bean>	
+    
+	<beans:bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">	    
+		<beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="jpaVendorAdapter">
+			<beans:bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+		</beans:property>
+		<beans:property name="jpaProperties">
+			<beans:props>
+			    <beans:prop key="hibernate.dialect">btc.blockchain.db.MySQL5MyISAMDialect</beans:prop>
+				<beans:prop key="hibernate.hbm2ddl.auto">update</beans:prop>
+				<beans:prop key="hibernate.id.new_generator_mappings">false</beans:prop>				
+				<beans:prop key="hibernate.show_sql">false</beans:prop>
+				<beans:prop key="hibernate.format_sql">false</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean>
+	
+	<beans:bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<beans:property name="entityManagerFactory" ref="entityManagerFactory" />
+	</beans:bean>
+	
+	<beans:bean id="entityManagerFactoryService" class="btc.blockchain.db.EntityManagerFactoryService"/>	
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+</beans:beans>

@@ -7,11 +7,13 @@ import com.google.gson.JsonParser;
 
 import info.blockchain.api.HttpClient;
 
+
 public class Service {
 
 	private final static String serviceURL = "http://localhost:3000/";
 
 	private final static JsonParser jsonParser = new JsonParser();
+	
 
 	private Service() { }
 
@@ -27,7 +29,7 @@ public class Service {
 		return jsonObj;
 	}
 
-	static JsonObject get(String uri, Map<String, String> params){
+	static JsonObject get(String uri, Map<String, String> params){		
 		JsonObject jsonObj = new JsonObject();
 		try {
 			String response = HttpClient.getInstance().get(serviceURL, uri, params);

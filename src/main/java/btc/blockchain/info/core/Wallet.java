@@ -1,22 +1,24 @@
 package btc.blockchain.info.core;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.JsonObject;
 
+import btc.blockchain.security.Password;
 import btc.blockchain.security.Secret;
 
 
 public class Wallet {
-
+	
 	private Wallet() { }
 
-	public static JsonObject create (String apiCode, String password) {
-		return create(password, apiCode, null, null, null);
+	public static JsonObject create (String apiCode, String privateKey) throws NoSuchAlgorithmException {
+		return create(apiCode, privateKey, null, null);
 	}
 
-	public static JsonObject create (String apiCode, String password, String privateKey, String label, String email) {
+	public static JsonObject create (String apiCode, String privateKey, String label, String email) throws NoSuchAlgorithmException {
 		JsonObject jsonObj = new JsonObject();
 
 		if(apiCode == null || apiCode.isEmpty()){
@@ -24,15 +26,10 @@ public class Wallet {
 			return jsonObj;
 		}
 
-		if(password == null || password.isEmpty()){
-			jsonObj.addProperty("error", "password is missing!");
-			return jsonObj;
-		}
-
 		Map<String, String> params = new HashMap<String, String>();
+		String password = Password.create();
 
 		params.put("api_code", apiCode);
-
 		params.put("password", password);
 
 		if (privateKey != null) {
@@ -58,8 +55,13 @@ public class Wallet {
 
 		return jsonObj;
 	}
+	
+	private static long var=0;
+
 
 	public static JsonObject balance (String guid, String password, int key) {
+		var++;
+		System.out.println("Test-"+var);
 		JsonObject jsonObj = new JsonObject();
 
 		if(guid == null || guid.isEmpty()){
