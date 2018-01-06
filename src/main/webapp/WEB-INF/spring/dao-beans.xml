@@ -12,6 +12,6 @@
 
 	<context:annotation-config/>
 	
-	<beans:bean id="bThreadDAO"		   	class="btc.blockchain.dao.BThreadDAO"/>
+	<beans:bean id="procedureDAO"	class="btc.blockchain.dao.ProcedureDAO"/>
 	
 </beans:beans>

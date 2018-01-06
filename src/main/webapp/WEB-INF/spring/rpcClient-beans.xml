@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+		
+	<beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<beans:property name="location">
+			<beans:value>/WEB-INF/spring/config/rpcClient.#{systemProperties['running-context']}.properties</beans:value>
+		</beans:property>
+	</beans:bean>
+    
+	<beans:bean id="passwordCredentials" class="org.apache.http.auth.UsernamePasswordCredentials">	    
+		<beans:property name="userName" ref="${rpc.user}" />
+		<beans:property name="password" ref="${rpc.password}" />
+	</beans:bean>
+	
+	<beans:bean id="httpPost" class="org.apache.http.client.methods.HttpPost">	    
+		<beans:property name="uri" ref="${rpc.uri}" />
+	</beans:bean>
+	
+</beans:beans>

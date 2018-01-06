@@ -15,8 +15,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.json.simple.JSONObject;
 
-import com.google.gson.JsonObject;
 
 
 public class Secret {
@@ -43,31 +43,33 @@ public class Secret {
 		return keys.get(new Random().nextInt(keys.size()));
 	}
 
-	public static JsonObject encrypt(String text) {
+	@SuppressWarnings("unchecked")
+	public static JSONObject encrypt(String text) {
 		BKey bKey = getBKey(0);
-		JsonObject jsonObj = new JsonObject();
+		JSONObject jsonObj = new JSONObject();
 		try { 	
 			byte[] plainText = text.getBytes(StandardCharsets.UTF_8);
 			byte[] cipherByte = exec(Cipher.ENCRYPT_MODE, plainText, bKey);
 			
 			String cipherText = Base64.encodeBase64String(cipherByte);
-			jsonObj.addProperty("cipher_text", cipherText);
-			jsonObj.addProperty("key", bKey.getKey());
+			jsonObj.put("cipher_text", cipherText);
+			jsonObj.put("key", bKey.getKey());
 		} catch (Exception e) {
-			jsonObj.addProperty("error", e.toString());
+			jsonObj.put("error", e.toString());
 		}
 		return jsonObj;
 	}
 
-	public static JsonObject decrypt(String text, int key) {  
+	@SuppressWarnings("unchecked")
+	public static JSONObject decrypt(String text, int key) {  
 		BKey bKey = getBKey(key);
-		JsonObject jsonObj = new JsonObject();
+		JSONObject jsonObj = new JSONObject();
 		try {
 			byte[] cipherText = Base64.decodeBase64(text.getBytes(CHARSET));
 			String plainText = new String(exec(Cipher.DECRYPT_MODE, cipherText, bKey));
-			jsonObj.addProperty("plain_text", plainText);
+			jsonObj.put("plain_text", plainText);
 		} catch (Exception e) {
-			jsonObj.addProperty("error", e.toString());
+			jsonObj.put("error", e.toString());
 		}
 		return jsonObj;
 	}

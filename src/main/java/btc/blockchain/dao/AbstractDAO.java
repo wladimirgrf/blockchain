@@ -6,6 +6,7 @@ import java.util.Collection;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -14,7 +15,7 @@ public abstract class AbstractDAO<T> implements Serializable {
 
 	private static final long serialVersionUID = 2588371344406743194L;
 
-	public abstract Class<T> getServiceClass();
+	protected abstract Class<T> getServiceClass();
 
 	protected EntityManager entityManager;
 
@@ -55,7 +56,7 @@ public abstract class AbstractDAO<T> implements Serializable {
 		if (orderBy != null && !orderBy.isEmpty() && order != null && !order.isEmpty()) {
 			sql.append(String.format("o.%s %s", orderBy, order));	
 		} else {
-			sql.append("a.id desc");
+			sql.append("o.id desc");
 		}
 		Query query = entityManager.createQuery(sql.toString());
 		if (pageSize > 0) {
@@ -68,7 +69,7 @@ public abstract class AbstractDAO<T> implements Serializable {
 	}
 
 	public long count() {
-		Query query = entityManager.createQuery(String .format("select count(a) from %s o" , getServiceClass().getSimpleName()));
+		Query query = entityManager.createQuery(String .format("select count(o) from %s o" , getServiceClass().getSimpleName()));
 		return (Long)query.getSingleResult();
 	}	
 }
