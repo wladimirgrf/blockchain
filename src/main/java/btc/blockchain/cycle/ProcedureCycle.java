@@ -6,9 +6,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
-
-
-import btc.blockchain.info.core.Wallet;
+import btc.blockchain.core.Wallet;
 
 
 public class ProcedureCycle implements Callable<Integer>{

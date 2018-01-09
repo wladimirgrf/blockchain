@@ -5,13 +5,8 @@
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
-		
-	<beans:bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<beans:property name="location">
-			<beans:value>/WEB-INF/spring/config/dataSource.#{systemProperties['running-context']}.properties</beans:value>
-		</beans:property>
-	</beans:bean>
-	
+
+
 	<beans:bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
  		<beans:property name="acquireIncrement" value="${c3p0.acquireIncrement}"/>
  		<beans:property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}"/>

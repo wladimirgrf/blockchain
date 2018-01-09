@@ -1,4 +1,4 @@
-package btc.blockchain.info.core;
+package btc.blockchain.core;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;

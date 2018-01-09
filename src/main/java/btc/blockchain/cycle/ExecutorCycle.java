@@ -10,8 +10,8 @@ import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import btc.blockchain.dao.ProcedureDAO;
-import btc.blockchain.model.Procedure;
+import btc.blockchain.dao.ProcessDAO;
+import btc.blockchain.model.Process;
 import btc.blockchain.model.Status;
 
 
@@ -20,11 +20,11 @@ public class ExecutorCycle {
 	private final static int THREAD_POOL_LIMIT = 5;
 	
 	@Autowired
-	private static ProcedureDAO procedureDAO;
+	private static ProcessDAO procedureDAO;
 
 	public static void main(String[] args) {
 		
-		List<Procedure> procedures = procedureDAO.getByStatus(Status.INLINE.ordinal());
+		List<Process> procedures = procedureDAO.getByStatus(Status.INLINE.ordinal());
 
 		ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_LIMIT);
 

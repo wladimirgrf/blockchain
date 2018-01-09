@@ -3,17 +3,17 @@ package btc.blockchain.dao;
 import java.util.List;
 import javax.persistence.Query;
 
-import btc.blockchain.model.Procedure;
+import btc.blockchain.model.Process;
 
 
-public class ProcedureDAO extends AbstractDAO<Procedure> {
+public class ProcessDAO extends AbstractDAO<Process> {
 
 	private static final long serialVersionUID = -3658484244017967121L;
 
 	@SuppressWarnings("unchecked")
-	public Procedure getByTxHash(String txHash) {
+	public Process getByTxHash(String txHash) {
 		Query query = entityManager.createQuery("from Process where txHash = :txHash").setParameter("txHash", txHash);
-		List<Procedure> result = query.getResultList();
+		List<Process> result = query.getResultList();
 		if (result == null || result.isEmpty()) {
 			return null;
 		}
@@ -21,9 +21,9 @@ public class ProcedureDAO extends AbstractDAO<Procedure> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Procedure> getByFromAddress(String address) {
+	public List<Process> getByFromAddress(String address) {
 		Query query = entityManager.createQuery("from Process where address = :address").setParameter("address", address);
-		List<Procedure> result = query.getResultList();
+		List<Process> result = query.getResultList();
 		if (result == null || result.isEmpty()) {
 			return null;
 		}
@@ -31,9 +31,9 @@ public class ProcedureDAO extends AbstractDAO<Procedure> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Procedure> getByStatus(int status) {
+	public List<Process> getByStatus(int status) {
 		Query query = entityManager.createQuery("from Process where status = :status").setParameter("status", status);
-		List<Procedure> result = query.getResultList();
+		List<Process> result = query.getResultList();
 		if (result == null || result.isEmpty()) {
 			return null;
 		}
@@ -41,7 +41,7 @@ public class ProcedureDAO extends AbstractDAO<Procedure> {
 	}
 
 	@Override
-	protected Class<Procedure> getServiceClass() {
-		return Procedure.class;
+	protected Class<Process> getServiceClass() {
+		return Process.class;
 	}
 }
