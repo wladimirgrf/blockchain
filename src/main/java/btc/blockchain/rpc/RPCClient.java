@@ -28,13 +28,17 @@ public class RPCClient implements Serializable {
 
 	private static RPCClient instance;
 
+	private static boolean nodeOn;
+
 	@Autowired
 	private HttpPost httpPost;
 
 	@Autowired
 	private Credentials credentials;
 
-	private RPCClient() { }
+	private RPCClient() { 
+		testNode();
+	}
 
 
 	public static synchronized RPCClient getInstance() {
@@ -43,45 +47,48 @@ public class RPCClient implements Serializable {
 		}
 		return instance;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public JSONObject rpcInvoke(String method, List<String> params) {
-		JSONObject jsonObj = new JSONObject();
-		
-		if(method == null) {
-			jsonObj.put("error", "missing method!");
-		} else if (!testConnection()) {
-			jsonObj.put("error", "blockchain node off!");
-		} else {
-			HttpResponse response = rpcExec(method, params);
-			if(response != null) {
-				jsonObj = httpResponseToJSON(response);
-			}
+		if(!nodeOn) {
+			return null;
 		}
+		
+		JSONObject jsonObj = null;
+
+		HttpResponse response = rpcExec(method, params);
+		if(response != null) {
+			jsonObj = httpResponseToJSON(response);
+		}
+
 		return jsonObj;
 	}
-	
-	private boolean testConnection() {
+
+	public synchronized boolean testNode() {
 		HttpResponse response = rpcExec(RPCCalls.GET_NETWORK_INFO.toString(), null);
-		return (response != null && response.getStatusLine().getStatusCode() == 200 ? true : false) ;
+		nodeOn = (response != null && response.getStatusLine().getStatusCode() == 200 ? true : false);
+		return  nodeOn;
 	}
 	
+	public boolean getNodeOn() {
+		return nodeOn;
+	}
+
 	@SuppressWarnings("unchecked")
 	private HttpResponse rpcExec(String method, List<String> params) {
 		JSONObject json = new JSONObject();
 		json.put("method", method);
-		
+
 		if (params != null) {
 			JSONArray array = new JSONArray();
 			array.addAll(params);
 			json.put("params", params);
 		}
-		
+
 		System.out.println(credentials.getPassword());
 		CredentialsProvider provider = new BasicCredentialsProvider();
 		provider.setCredentials(AuthScope.ANY, credentials);
 		CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
-		
+
 		try {
 			StringEntity myEntity = new StringEntity(json.toJSONString());
 			httpPost.setEntity(myEntity);
@@ -89,18 +96,17 @@ public class RPCClient implements Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
-		
+
 		return null;
 	}
-	
+
 	private JSONObject httpResponseToJSON(HttpResponse response)  {
 		if( response == null) {
 			return null;
 		}
-		
 		HttpEntity entity = response.getEntity();
-
 		JSONParser parser = new JSONParser();
+		
 		try {
 			return (JSONObject) parser.parse(EntityUtils.toString(entity));
 		} catch (Exception e) {

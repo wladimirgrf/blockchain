@@ -3,17 +3,17 @@ package btc.blockchain.dao;
 import java.util.List;
 import javax.persistence.Query;
 
-import btc.blockchain.model.Process;
+import btc.blockchain.model.Transaction;
 
 
-public class ProcessDAO extends AbstractDAO<Process> {
+public class TransactionDAO extends AbstractDAO<Transaction> {
 
 	private static final long serialVersionUID = -3658484244017967121L;
 
 	@SuppressWarnings("unchecked")
-	public Process getByTxHash(String txHash) {
+	public Transaction getByTxHash(String txHash) {
 		Query query = entityManager.createQuery("from Process where txHash = :txHash").setParameter("txHash", txHash);
-		List<Process> result = query.getResultList();
+		List<Transaction> result = query.getResultList();
 		if (result == null || result.isEmpty()) {
 			return null;
 		}
@@ -21,9 +21,9 @@ public class ProcessDAO extends AbstractDAO<Process> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Process> getByFromAddress(String address) {
+	public List<Transaction> getByFromAddress(String address) {
 		Query query = entityManager.createQuery("from Process where address = :address").setParameter("address", address);
-		List<Process> result = query.getResultList();
+		List<Transaction> result = query.getResultList();
 		if (result == null || result.isEmpty()) {
 			return null;
 		}
@@ -31,9 +31,9 @@ public class ProcessDAO extends AbstractDAO<Process> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Process> getByStatus(int status) {
+	public List<Transaction> getByStatus(int status) {
 		Query query = entityManager.createQuery("from Process where status = :status").setParameter("status", status);
-		List<Process> result = query.getResultList();
+		List<Transaction> result = query.getResultList();
 		if (result == null || result.isEmpty()) {
 			return null;
 		}
@@ -41,7 +41,7 @@ public class ProcessDAO extends AbstractDAO<Process> {
 	}
 
 	@Override
-	protected Class<Process> getServiceClass() {
-		return Process.class;
+	protected Class<Transaction> getServiceClass() {
+		return Transaction.class;
 	}
 }

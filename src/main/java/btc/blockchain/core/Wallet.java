@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-import btc.blockchain.security.Password;
-import btc.blockchain.security.Secret;
-
 
 public class Wallet {
 	

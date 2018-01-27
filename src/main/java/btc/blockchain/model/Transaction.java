@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 
 @Entity
-public class Process implements Serializable{
+public class Transaction implements Serializable{
 
 	private static final long serialVersionUID = -5121900911525738966L;
 	
@@ -23,11 +23,9 @@ public class Process implements Serializable{
 	
 	private String txHash;
 	
-	private String password;
+	private String privateKey;
 	
 	private String toAddress;
-	
-	private String fromAddress;
 	
 	private Status status;
 	
@@ -66,12 +64,12 @@ public class Process implements Serializable{
 		this.txHash = txHash;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getPrivateKey() {
+		return privateKey;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setPrivateKey(String privateKey) {
+		this.privateKey = privateKey;
 	}
 
 	public String getToAddress() {
@@ -80,14 +78,6 @@ public class Process implements Serializable{
 
 	public void setToAddress(String toAddress) {
 		this.toAddress = toAddress;
-	}
-
-	public String getFromAddress() {
-		return fromAddress;
-	}
-
-	public void setFromAddress(String fromAddress) {
-		this.fromAddress = fromAddress;
 	}
 
 	public Status getStatus() {
@@ -108,6 +98,6 @@ public class Process implements Serializable{
 
 	@Override
     public String toString() {
-        return String.format("btc.blockchain.model.Process#%s", id);
+        return String.format("btc.blockchain.model.Transaction#%s", id);
     }
 }

@@ -13,6 +13,4 @@
 		<beans:constructor-arg value="${rpc.user}" />
 		<beans:constructor-arg value="${rpc.password}" />
 	</beans:bean >
-	
-	<beans:bean id="clientFactory" class="btc.blockchain.rpc.HttpClientFactory" />
 </beans:beans>

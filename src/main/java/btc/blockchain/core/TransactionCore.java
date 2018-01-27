@@ -6,9 +6,9 @@ import java.util.Map.Entry;
 
 
 
-public class Transaction {
+public class TransactionCore {
 
-	private Transaction() { }
+	private TransactionCore() { }
 
 //	public static JsonObject send (String guid, String password, String toAddress, long amount, String fromAddress, Long fee, String note) {
 //		Map<String, Long> recipient = new HashMap<String, Long>();
