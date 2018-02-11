@@ -5,10 +5,8 @@
 	xmlns:context="http://www.springframework.org/schema/context" 
 	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-		
-
-	<beans:import resource="dataSource-beans.xml" />
-	<beans:import resource="dao-beans.xml" />
-	<beans:import resource="rpcClient-beans.xml" />	
-	<beans:import resource="cycle-beans.xml" />	
+	
+	<beans:bean id="transactionCycle" class="btc.blockchain.cycle.TransactionCycle" />
+	
+	<context:component-scan base-package="btc.blockchain.cycle"/>	
 </beans:beans>

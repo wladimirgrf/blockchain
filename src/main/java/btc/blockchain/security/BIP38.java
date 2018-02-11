@@ -1,6 +1,7 @@
 package btc.blockchain.security;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -22,7 +23,6 @@ import com.google.bitcoin.core.Base58;
 import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
-import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
 
 import com.lambdaworks.crypto.SCrypt;
@@ -32,9 +32,7 @@ public class BIP38 {
 	private static NetworkParameters params = TestNet3Params.get();
 
 
-	public static void main(String args[])  {
-		
-		System.out.println("");
+	public static void main(String args[]){
 		
 		JSONObject ek = encrypt("cPvMdgufqvNwZMntSX2iQJFiyGnii9A9vpfEyeeFxgRPy7tzMT3U");
 		System.out.println(ek);
@@ -45,7 +43,7 @@ public class BIP38 {
 	@SuppressWarnings("unchecked")
 	public static JSONObject encrypt(String privateKey) {
 		JSONObject jsonObj = new JSONObject();
-		BKey bKey = getBKey(0);
+		BIP38Key bKey = getBKey(0);
 		try {
 			jsonObj.put("bip38_cipher", bip38Encrypt(bKey.getValue(), privateKey));
 			jsonObj.put("bip38_key", bKey.getKey());
@@ -58,7 +56,7 @@ public class BIP38 {
 	@SuppressWarnings("unchecked")
 	public static JSONObject decrypt(String bip38Cipher, int bip38Key) {
 		JSONObject jsonObj = new JSONObject();
-		BKey bKey = getBKey(bip38Key);
+		BIP38Key bKey = getBKey(bip38Key);
 		try {
 			jsonObj.put("private_key", bip38Decrypt(bKey.getValue(), bip38Cipher));
 		} catch (Exception e) {
@@ -67,7 +65,7 @@ public class BIP38 {
 		return jsonObj;
 	}
 
-	private static String bip38Encrypt(String passphrase, String encodedPrivateKey) throws AddressFormatException, UnsupportedEncodingException, GeneralSecurityException {	
+	private static String bip38Encrypt(String passphrase, String encodedPrivateKey) throws AddressFormatException, GeneralSecurityException, IOException {	
 		DumpedPrivateKey dk = new DumpedPrivateKey(params, encodedPrivateKey);
 		ECKey ktmp = dk.getKey();
 		
@@ -123,11 +121,11 @@ public class BIP38 {
 	}
 	
 	
-	private static BKey getBKey(int key){
-		if(key > 0 && key <= BKey.values().length){
-			return BKey.getByKey(key);
+	private static BIP38Key getBKey(int key){
+		if(key > 0 && key <= BIP38Key.values().length){
+			return BIP38Key.getByKey(key);
 		}
-		List<BKey> keys = Collections.unmodifiableList(Arrays.asList(BKey.values()));
+		List<BIP38Key> keys = Collections.unmodifiableList(Arrays.asList(BIP38Key.values()));
 		return keys.get(new Random().nextInt(keys.size()));
 	}
 
@@ -158,15 +156,10 @@ public class BIP38 {
 		return cipher.doFinal(ciphertext);
 	}
 
-	private static byte[] concat(byte[]... buffers) {
+	private static byte[] concat(byte[]... buffers) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		for (byte [] b : buffers) {
-			try {
-				baos.write(b);
-			}
-			catch (java.io.IOException e) {
-				throw new RuntimeException(e.getMessage());
-			}
+			baos.write(b);	
 		}
 		return baos.toByteArray();
 	}

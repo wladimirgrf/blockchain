@@ -1,49 +1,47 @@
 package btc.blockchain.cycle;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
+
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.PostConstruct;
 
-import btc.blockchain.dao.TransactionDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import btc.blockchain.model.Transaction;
 import btc.blockchain.model.Status;
 
-
+@Service
 public class CycleFactory {
 	
 	private final static int THREAD_POOL_LIMIT = 5;
 	
-	private ScheduledFuture<?> scheduleFuture;
+	@Autowired
+	private TransactionCycle transactionCycle;
 	
 	
-
-
-	
-	public void scheduleThread(AbstractCycle cycle, int minutes) {
-		ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-		scheduleFuture = executor.scheduleAtFixedRate(cycle, 0, minutes, TimeUnit.MINUTES);
+	@PostConstruct
+	public void start() {
+		ScheduledExecutorService scheduleExecutorService = Executors.newScheduledThreadPool(THREAD_POOL_LIMIT);
+		scheduleExecutorService.scheduleAtFixedRate(transactionCycle, 0, 1, TimeUnit.MINUTES);
 	}
 	
-	public static void main (String[] args) {
-		ScheduledExecutorService ses = Executors.newScheduledThreadPool(10);
-		ses.scheduleAtFixedRate(new Runnable() {
-		    @Override
-		    public void run() {
-		        System.out.println("Thread - "+ new Date().getTime());
-		    }
-		}, 0, 30, TimeUnit.SECONDS);
-	}
+
 	
+	
+	private Transaction getT() {
+		Transaction t = new Transaction();
+		t.setId(1l);
+		t.setSatoshiAmount(1000000);
+		t.setFee(500);
+		t.setToAddress("msNhm676VaSTiUXM8moEih34RbrM2AKSXZ");
+		t.setBip38Cipher("6PYWpAUkWHf65BP7xEv3qzus7D2xpU2f4SaYWtwbN1tXG6Ce5hi2FmN5V4");
+		t.setBip38Key(3);
+		t.setStatus(Status.INLINE);
+		
+		return t;
+	}
 }
 

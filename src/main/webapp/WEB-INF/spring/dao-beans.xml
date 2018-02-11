@@ -8,5 +8,5 @@
 
 	<context:annotation-config/>
 	
-	<beans:bean id="processDAO"	class="btc.blockchain.dao.ProcessDAO"/>
+	<beans:bean id="transactionDAO"	class="btc.blockchain.dao.TransactionDAO"/>
 </beans:beans>

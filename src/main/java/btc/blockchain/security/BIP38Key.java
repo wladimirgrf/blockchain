@@ -1,7 +1,7 @@
 package btc.blockchain.security;
 
 
-public enum BKey {
+public enum BIP38Key {
 	one     (1,"d2A8b32c44b3e2c6aa805c6cc2a6c9ad"),
 	two     (2,"cf62d3bcb1db224138113b80e7ASssa2"),
 	three   (3,"299b60Fe459bc52817f41039ccdsfdfs"),
@@ -17,7 +17,7 @@ public enum BKey {
 	thirteen(13,"s0b675549b2cc474exzcccegdv3443p5");
 	
 	
-	BKey(int key, String value) {
+	BIP38Key(int key, String value) {
 		this.key = key;
 		this.value = value;
 	}
@@ -34,8 +34,8 @@ public enum BKey {
 		return value;
 	}
 	
-	static BKey getByKey(int key) {
-		for (BKey bKey: BKey.values()) {
+	static BIP38Key getByKey(int key) {
+		for (BIP38Key bKey: BIP38Key.values()) {
 			if (bKey.getKey() == key) {
 				return bKey;
 			}

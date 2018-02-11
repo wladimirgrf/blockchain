@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.json.simple.JSONObject;
+
 
 @Entity
 public class Transaction implements Serializable{
@@ -17,19 +19,23 @@ public class Transaction implements Serializable{
 	@GeneratedValue(strategy = GenerationType.AUTO)	
 	private Long id;
 	
-	private long amount;
+	private long satoshiAmount;
 	
 	private long fee;
 	
 	private String txHash;
 	
-	private String privateKey;
+	private String bip38Cipher;
+	
+	private int bip38Key;
 	
 	private String toAddress;
 	
 	private Status status;
 	
 	private String requestIP;
+	
+	private String note;
 
 
 	public Long getId() {
@@ -40,12 +46,12 @@ public class Transaction implements Serializable{
 		this.id = id;
 	}
 
-	public long getAmount() {
-		return amount;
+	public long getSatoshiAmount() {
+		return satoshiAmount;
 	}
 
-	public void setAmount(long amount) {
-		this.amount = amount;
+	public void setSatoshiAmount(long satoshiAmount) {
+		this.satoshiAmount = satoshiAmount;
 	}
 
 	public long getFee() {
@@ -64,12 +70,20 @@ public class Transaction implements Serializable{
 		this.txHash = txHash;
 	}
 
-	public String getPrivateKey() {
-		return privateKey;
+	public String getBip38Cipher() {
+		return bip38Cipher;
 	}
 
-	public void setPrivateKey(String privateKey) {
-		this.privateKey = privateKey;
+	public void setBip38Cipher(String bip38Cipher) {
+		this.bip38Cipher = bip38Cipher;
+	}
+
+	public int getBip38Key() {
+		return bip38Key;
+	}
+
+	public void setBip38Key(int bip38Key) {
+		this.bip38Key = bip38Key;
 	}
 
 	public String getToAddress() {
@@ -96,8 +110,25 @@ public class Transaction implements Serializable{
 		this.requestIP = requestIP;
 	}
 
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	
 	@Override
+	@SuppressWarnings("unchecked")
     public String toString() {
-        return String.format("btc.blockchain.model.Transaction#%s", id);
+		JSONObject obj = new JSONObject();
+		obj.put("txHash", txHash);
+		obj.put("toAddress", toAddress);
+        obj.put("satoshiAmount", satoshiAmount);
+        obj.put("fee", fee);
+        obj.put("status", status);
+        
+        return  obj.toJSONString();
     }
 }

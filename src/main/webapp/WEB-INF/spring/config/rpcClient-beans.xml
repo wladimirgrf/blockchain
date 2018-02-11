@@ -18,12 +18,7 @@
 		<beans:constructor-arg value="${rpc.password}" />
 	</beans:bean >
 	
-	<beans:bean id="rpcClient" class="btc.blockchain.rpc.RPCClient" >
-		<beans:constructor-arg ref="credentials" />
-		<beans:constructor-arg ref="httpPost" />
-	</beans:bean >
-	
 	<beans:bean id="rpcTransaction" class="btc.blockchain.rpc.RPCTransaction" />
 	
-	<beans:bean id="rpcAddress" class="btc.blockchain.rpc.RPCAddress" />
+	<beans:bean id="transactionCycle" class="btc.blockchain.cycle.TransactionCycle" />
 </beans:beans>

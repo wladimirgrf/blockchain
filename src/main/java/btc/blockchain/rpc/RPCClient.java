@@ -19,58 +19,39 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 
 public class RPCClient implements Serializable {
 
-	private static final long serialVersionUID = -8517760270335249137L;
-
-	private static RPCClient instance;
+	private static final long serialVersionUID = -4335777621988743815L;
 
 	private static boolean nodeOn;
 
-	@Autowired
 	private HttpPost httpPost;
 
-	@Autowired
 	private Credentials credentials;
-
-	private RPCClient() { 
-		testNode();
-	}
-
-
-	public static synchronized RPCClient getInstance() {
-		if (instance == null) {
-			instance = new RPCClient();
-		}
-		return instance;
+	
+	public RPCClient(Credentials credentials, HttpPost httpPost){
+		this.credentials = credentials;
+		this.httpPost = httpPost;
 	}
 
 	public JSONObject rpcInvoke(String method, List<String> params) {
 		if(!nodeOn) {
 			return null;
 		}
-		
 		JSONObject jsonObj = null;
-
 		HttpResponse response = rpcExec(method, params);
+		
 		if(response != null) {
 			jsonObj = httpResponseToJSON(response);
 		}
-
 		return jsonObj;
 	}
 
-	public synchronized boolean testNode() {
+	public boolean testNode() {
 		HttpResponse response = rpcExec(RPCCalls.GET_NETWORK_INFO.toString(), null);
 		nodeOn = (response != null && response.getStatusLine().getStatusCode() == 200 ? true : false);
 		return  nodeOn;
-	}
-	
-	public boolean getNodeOn() {
-		return nodeOn;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -84,7 +65,6 @@ public class RPCClient implements Serializable {
 			json.put("params", params);
 		}
 
-		System.out.println(credentials.getPassword());
 		CredentialsProvider provider = new BasicCredentialsProvider();
 		provider.setCredentials(AuthScope.ANY, credentials);
 		CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();

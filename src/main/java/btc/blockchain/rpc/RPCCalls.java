@@ -29,6 +29,7 @@ public enum RPCCalls {
     SEND_TO_ADDRESS("sendtoaddress"),
 
     DUMP_PRIVATE_KEY("dumpprivkey"),
+    IMPORT_PRIV_KEY("importprivkey"),
     BACKUP_WALLET("backupwallet"),
     DECODE_RAW_TRANSACTION("decoderawtransaction"),
     CREATE_RAW_TRANSACTION("createrawtransaction"),
