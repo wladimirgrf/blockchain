@@ -9,6 +9,6 @@
 
 	<beans:import resource="dataSource-beans.xml" />
 	<beans:import resource="dao-beans.xml" />
-	<beans:import resource="rpcClient-beans.xml" />	
+	<beans:import resource="rpc-beans.xml" />	
 	<beans:import resource="cycle-beans.xml" />	
 </beans:beans>

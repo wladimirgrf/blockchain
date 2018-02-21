@@ -6,42 +6,38 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-import btc.blockchain.dao.TransactionDAO;
+import btc.blockchain.dao.RequestDAO;
 import btc.blockchain.model.Status;
-import btc.blockchain.model.Transaction;
-import btc.blockchain.rpc.RPCTransaction;
+import btc.blockchain.model.Request;
+import btc.blockchain.rpc.controller.TransactionController;
 
 
 public class TransactionCycle  implements Runnable {
 	
 	@Autowired
-	private TransactionDAO transactionDAO;
+	private RequestDAO dao;
 
 	@Autowired
-	private RPCTransaction rpc;
+	private TransactionController rpc;
 
 
 	@Override
 	public void run() {
-		List<Transaction> transactions = null;
-		try {
-			transactions = transactionDAO.getByStatus(Status.INLINE);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		List<Request> transactions = dao.getByStatus(Status.INLINE);
+
 		if(transactions == null) {
 			System.out.println("No transaction");
 			return;
 		}
 		
-		Transaction transaction = transactions.get(0);
+		Request transaction = transactions.get(0);
 		
 		transaction.setStatus(Status.LOCK);
-		transactionDAO.merge(transaction);
+		dao.merge(transaction);
 		
 		System.out.println(transaction);
 		
-		//JSONObject jsonObj = rpcTransaction.send(transaction.getId(), transaction.getBip38Cipher(), transaction.getBip38Key(), transaction.getToAddress(), transaction.getSatoshiAmount());
+		//JSONObject jsonObj = rpc.send(transaction.getId(), transaction.getBip38Cipher(), transaction.getBip38Key(), transaction.getToAddress(), transaction.getSatoshiAmount());
 	}
 	
 	

@@ -7,21 +7,21 @@
 <body>
 	<h1>BITCHAIN API</h1>
 
-	<div ng-app="app" ng-controller="ctrl"> 
-		<h3>{{json}}</h3>
-	</div>
+<!-- 	<div ng-app="app" ng-controller="ctrl">  -->
+<!-- 		<h3></h3> -->
+<!-- 	</div> -->
 
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<!-- 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script> -->
 
-	<script>
-		var app = angular.module('app', []);
-		app.controller('ctrl', function($scope, $http) {
-		  $http.get("/balance/c8ef2c73-78ae-4b2c-a556-39807f520722?password=h%2bnocTpVSaD80PniZZ9geA==&key=5")
-		  .then(function(response) {
-		      $scope.json = response.data;
-		  });
-		});
-	</script>
+<!-- 	<script> -->
+<!--   		var app = angular.module('app', []); -->
+<!--   		app.controller('ctrl', function($scope, $http) { -->
+<!--   		  $http.get("/balance/c8ef2c73-78ae-4b2c-a556-39807f520722?password=h%2bnocTpVSaD80PniZZ9geA==&key=5") -->
+<!--  		  .then(function(response) { -->
+<!--   		      $scope.json = response.data; -->
+<!--  		  }); -->
+<!-- 		}); -->
+<!-- 	</script> -->
 
 </body>
 </html>

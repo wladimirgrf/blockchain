@@ -1,6 +1,6 @@
-package btc.blockchain.rpc;
+package btc.blockchain.rpc.model;
 
-public enum RPCCalls {
+public enum Method {
 	
 	GET_BLOCK_COUNT("getblockcount"),
 	GET_NEW_ADDRESS("getnewaddress"),
@@ -41,7 +41,7 @@ public enum RPCCalls {
 
     private String value;
 
-    private RPCCalls(String value) {
+    private Method(String value) {
         this.value = value;
     }
 
