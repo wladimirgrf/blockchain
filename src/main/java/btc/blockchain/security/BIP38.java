@@ -51,11 +51,24 @@ public class BIP38 implements Serializable{
 	@SuppressWarnings("unchecked")
 	public static JSONObject decrypt(String bip38Cipher, int bip38Key) throws UnsupportedEncodingException, AddressFormatException, GeneralSecurityException {
 		JSONObject obj = new JSONObject();
+		
+		if(bip38Key <= 0) {
+			throw new GeneralSecurityException();
+		}
 		BIP38Key bKey = getBKey(bip38Key);
 
 		obj.put("private_key", bip38Decrypt(bKey.getValue(), bip38Cipher));
 
 		return obj;
+	}
+	
+	public static boolean isValidCipher(String bip38Cipher, int bip38Key) {
+		try {
+			decrypt(bip38Cipher, bip38Key);
+		} catch (UnsupportedEncodingException | AddressFormatException | GeneralSecurityException e) {
+			return false;
+		}
+		return true;
 	}
 
 	private static String bip38Encrypt(String passphrase, String encodedPrivateKey) throws AddressFormatException, GeneralSecurityException, IOException {	

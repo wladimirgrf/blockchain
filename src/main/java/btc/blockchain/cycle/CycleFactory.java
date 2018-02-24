@@ -17,13 +17,13 @@ public class CycleFactory {
 	private final static int THREAD_POOL_LIMIT = 5;
 	
 	@Autowired
-	private TransactionCycle transactionCycle;
+	private RequestCycle requestCycle;
 	
 	
 	@PostConstruct
 	public void start() {
 		ScheduledExecutorService scheduleExecutorService = Executors.newScheduledThreadPool(THREAD_POOL_LIMIT);
-		scheduleExecutorService.scheduleAtFixedRate(transactionCycle, 0, 1, TimeUnit.MINUTES);
+		scheduleExecutorService.scheduleAtFixedRate(requestCycle, 0, 1, TimeUnit.MINUTES);
 	}
 }
 

@@ -2,6 +2,7 @@ package btc.blockchain.rpc.model;
 
 import org.json.simple.JSONObject;
 
+
 public class Transaction {
 
 	private String toAddress;

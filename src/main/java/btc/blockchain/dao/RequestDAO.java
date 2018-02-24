@@ -24,17 +24,7 @@ public class RequestDAO extends AbstractDAO<Request> {
 
 	@SuppressWarnings("unchecked")
 	public Request getByTxId(String txId) {
-		Query query = entityManager.createQuery("from Transaction where txId = :txId").setParameter("txId", txId);
-		List<Request> result = query.getResultList();
-		if (result == null || result.isEmpty()) {
-			return null;
-		}
-		return result.get(0);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public Request getByTxHash(String txHash) {
-		Query query = entityManager.createQuery("from Transaction where txHash = :txHash").setParameter("txHash", txHash);
+		Query query = entityManager.createQuery("from Request where txId = :txId").setParameter("txId", txId);
 		List<Request> result = query.getResultList();
 		if (result == null || result.isEmpty()) {
 			return null;
@@ -44,7 +34,7 @@ public class RequestDAO extends AbstractDAO<Request> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Request> getByStatus(Status status) {
-		Query query = entityManager.createQuery("from Transaction where status = :status").setParameter("status", status);
+		Query query = entityManager.createQuery("from Request where status = :status").setParameter("status", status);
 		List<Request> result = query.getResultList();
 		if (result == null || result.isEmpty()) {
 			return null;

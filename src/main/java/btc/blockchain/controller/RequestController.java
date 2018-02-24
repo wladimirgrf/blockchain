@@ -1,115 +1,113 @@
 package btc.blockchain.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import btc.blockchain.dao.RequestDAO;
 import btc.blockchain.model.Status;
 import btc.blockchain.model.Request;
-import btc.blockchain.rpc.controller.TransactionController;
-import btc.blockchain.rpc.controller.WalletController;
 import btc.blockchain.rpc.model.Method;
 import btc.blockchain.rpc.model.Transaction;
+import btc.blockchain.rpc.validator.TransactionValidator;
 
 
 @RestController
-public class RequestController implements Validator, Serializable {
+public class RequestController implements Serializable {
 
 	private static final long serialVersionUID = 8155431350750583974L;
+	
+	@Autowired
+	private ReloadableResourceBundleMessageSource messageSource;
+	
+	@Autowired
+	private TransactionValidator transactionValidator;
 
 	@Autowired
 	private RequestDAO dao;
 
-	@Autowired
-	private TransactionController transactionRPC;
-	
-	@Autowired
-	private WalletController wrpc;
-	
-	private Transaction transaction;
-	
 
+	@InitBinder("transactionBinder")
+	protected void transactionBinder(WebDataBinder binder) {
+		binder.addValidators(transactionValidator);
+	}
 
-
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/send")
-	public String send(@ModelAttribute("transaction") Transaction transaction, BindingResult bindingResult) throws ParseException {
-
-		if (bindingResult.hasErrors()) {
-			//return 
+	public String send(@ModelAttribute("transactionBinder") @Validated Transaction transaction, BindingResult result) throws ParseException {
+		if (result.hasErrors()) {
+			return bindingResultToJson(result).toJSONString();
 		}
-		
 		JSONObject properties = (JSONObject)  new JSONParser().parse(transaction.toString());
-		Request entity = new Request();
-		
-		entity.setProperties(properties);
-		entity.setStatus(Status.INLINE);
-		entity.setMethod(Method.SEND_FROM);
-
-		dao.persist(entity);
+		Request entity = generateRequest(Method.SEND_FROM, properties);
 
 		return entity.toString();
 	}
-	
 
-	@RequestMapping(value = "/create")
-	public String create() {
-		return null;
-	}
-	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/balance/{address}")
 	public String balance(@PathVariable("address") String address) {
-		return wrpc.balance(address).toJSONString();
+		JSONObject properties = new JSONObject();
+		properties.put("address", address);
+		Request entity = generateRequest(Method.GET_RECEIVED_BY_ADDRESS, properties);
+		
+		return entity.toString();
 	}
 	
-	public static void main(String[] args) throws ParseException {
-		JSONParser parser = new JSONParser();
-		JSONObject j = (JSONObject) parser.parse("{\"result\":0.1,\"id\":null,\"error\":null}");
+	@RequestMapping(value = "/create")
+	public String create() {
+		Request entity = generateRequest(Method.GET_NEW_ADDRESS);
 		
-		System.out.println(j.get("result"));
-	}
-
-
-	@Override
-	public boolean supports(Class<?> arg0) {
-		return false;
-	}
-
-
-	@Override
-	public void validate(Object object, Errors errors) {
-		if(object instanceof Transaction) {
-			validateTransaction(object, errors);
-		}
-		
+		return entity.toString();
 	}
 	
-	private void validateTransaction(Object object, Errors errors) {
-		Transaction transaction = (Transaction) object;
+	@RequestMapping(value = "/request/{txId}")
+	public String getByTxId(@PathVariable("txId") String txId) {
+		Request entity = dao.getByTxId(txId);
 		
-		if(transaction.getBip38Cipher() == null || transaction.getBip38Key() <= 0 || transaction.getToAddress() == null || transaction.getSatoshiAmount() <= 0) {
-			errors.reject("fields cannot be null");
-			return;
+		return entity.toString();
+	}
+	
+	private Request generateRequest(Method method) {
+		return generateRequest(method, null);
+	}
+	
+	private Request generateRequest(Method method, JSONObject properties) {
+		Request entity = new Request();
+		if(properties != null) {
+			entity.setProperties(properties);
 		}
-		if(!transactionRPC.isValidCipher(transaction.getBip38Cipher(), transaction.getBip38Key())) {
-			errors.reject("incorrect cipher or key");
-			return;
+		entity.setStatus(Status.INLINE);
+		entity.setMethod(method);
+		dao.persist(entity);
+
+		return entity;
+	}
+
+	@SuppressWarnings("unchecked")
+	private JSONObject bindingResultToJson(BindingResult result) {
+		List<String> errors = new ArrayList<String>();
+		for (ObjectError objectError : result.getAllErrors()) {
+			errors.add(messageSource.getMessage(objectError, null));
 		}
-		if(transactionRPC.isValidAddress(transaction.getToAddress())) {
-			errors.reject("Address is not valid");
-			return;
-		}
+		JSONObject exceptions = new JSONObject();
+		exceptions.put("errors", errors);
+		
+		return exceptions;
 	}
 }

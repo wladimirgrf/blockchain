@@ -3,6 +3,7 @@ package btc.blockchain.rpc.controller;
 import org.json.simple.JSONObject;
 
 import btc.blockchain.rpc.model.Method;
+import btc.blockchain.security.BIP38;
 
 
 public class WalletController extends AbstractController {
@@ -29,7 +30,7 @@ public class WalletController extends AbstractController {
 	public JSONObject dumpPrivateKey(Long id, String bip38Cipher, int bip38Key) {
 		JSONObject importedWallet = new JSONObject();
 		
-		if(!isValidCipher(bip38Cipher, bip38Key)) {
+		if(!BIP38.isValidCipher(bip38Cipher, bip38Key)) {
 			importedWallet.put("error", "cipher or key incorrect");			
 		}
 		

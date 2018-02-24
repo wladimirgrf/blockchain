@@ -35,6 +35,7 @@ public class AbstractController implements Serializable {
 		} catch (ParseException | org.json.simple.parser.ParseException | IOException e) {
 			object.put("error", e.getMessage());
 		}
+		
 		return object;
 	}
 	
@@ -47,29 +48,20 @@ public class AbstractController implements Serializable {
 		} catch (UnsupportedEncodingException | AddressFormatException | GeneralSecurityException e) {
 			importedWallet.put("error", e.getMessage());
 		}
+		
 		return importedWallet;
-	}
-	
-	public boolean isValidCipher(String bip38Cipher, int bip38Key) {
-		try {
-			BIP38.decrypt(bip38Cipher, bip38Key);
-		} catch (UnsupportedEncodingException | AddressFormatException | GeneralSecurityException e) {
-			return false;
-		}
-		return true;
 	}
 	
 	public boolean isValidAddress(String address) {			
 		JSONObject validatedAddress = invoke(Method.VALIDATE_ADDRESS, address);
-		
 		if(validatedAddress.containsKey("error") && validatedAddress.get("error") != null) {
 			return false;
 		}
 		JSONObject result = (JSONObject) validatedAddress.get("result");
-
 		if(result.get("isvalid").toString() == "false") {
 			return false;
 		}
+		
 		return true;
 	}
 }

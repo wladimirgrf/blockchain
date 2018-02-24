@@ -18,12 +18,14 @@
 		<beans:constructor-arg value="${rpc.password}" />
 	</beans:bean >
 	
-	<beans:bean id="clientFactory" class="btc.blockchain.rpc.connection.ClientFactoryRPC" >
+	<beans:bean id="clientFactory" class="btc.blockchain.rpc.client.ClientFactory" >
 		<beans:constructor-arg ref="credentials" />
 		<beans:constructor-arg ref="httpPost" />
 	</beans:bean >
 	
-	<beans:bean id="transactionRPCController" class="btc.blockchain.rpc.controller.TransactionRPCController" />
+	<beans:bean id="transactionController" class="btc.blockchain.rpc.controller.TransactionController" />
 	
-	<beans:bean id="walletRPCController" class="btc.blockchain.rpc.controller.WalletRPCController" />
+	<beans:bean id="walletController" class="btc.blockchain.rpc.controller.WalletController" />
+	
+	<beans:bean id="transactionValidator" class="btc.blockchain.rpc.validator.TransactionValidator" />
 </beans:beans>

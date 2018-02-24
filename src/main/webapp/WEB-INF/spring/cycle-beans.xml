@@ -6,7 +6,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
+	<beans:bean id="requestCycle" class="btc.blockchain.cycle.RequestCycle" />
 	<beans:bean id="transactionCycle" class="btc.blockchain.cycle.TransactionCycle" />
+	<beans:bean id="walletCycle" class="btc.blockchain.cycle.WalletCycle" />
 	
 	<context:component-scan base-package="btc.blockchain.cycle"/>	
 </beans:beans>
