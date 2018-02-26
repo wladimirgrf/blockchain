@@ -23,6 +23,10 @@ public class TransactionController extends AbstractController {
 
 		return invoke(Method.SEND_FROM, id.toString(), toAddress, satoshiToBtc(satoshiAmount));
 	}
+	
+	public JSONObject getTx(String txHash) {
+		return invoke(Method.GET_RAW_TRANSACTION, txHash, "true");
+	}
 
 	private String satoshiToBtc(long satoshiAmount) {
 		BigDecimal coin = BigDecimal.valueOf(satoshiAmount);

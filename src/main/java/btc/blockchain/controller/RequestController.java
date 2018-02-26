@@ -43,9 +43,21 @@ public class RequestController implements Serializable {
 	private RequestDAO dao;
 
 
-	@InitBinder("transactionBinder")
-	protected void transactionBinder(WebDataBinder binder) {
-		binder.addValidators(transactionValidator);
+	@RequestMapping(value = "/request/{txId}")
+	public String getRequest(@PathVariable("txId") String txId) {
+		Request request = dao.getByTxId(txId);
+		
+		return (request != null ? request.toString() : null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/balance/{address}")
+	public String balance(@PathVariable("address") String address) {
+		JSONObject properties = new JSONObject();
+		properties.put("address", address);
+		Request request = generateRequest(Method.GET_RECEIVED_BY_ADDRESS, properties);
+		
+		return request.toString();
 	}
 
 	@RequestMapping(value = "/send")
@@ -54,49 +66,38 @@ public class RequestController implements Serializable {
 			return bindingResultToJson(result).toJSONString();
 		}
 		JSONObject properties = (JSONObject)  new JSONParser().parse(transaction.toString());
-		Request entity = generateRequest(Method.SEND_FROM, properties);
+		Request request = generateRequest(Method.SEND_FROM, properties);
 
-		return entity.toString();
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/balance/{address}")
-	public String balance(@PathVariable("address") String address) {
-		JSONObject properties = new JSONObject();
-		properties.put("address", address);
-		Request entity = generateRequest(Method.GET_RECEIVED_BY_ADDRESS, properties);
-		
-		return entity.toString();
+		return request.toString();
 	}
 	
 	@RequestMapping(value = "/create")
 	public String create() {
-		Request entity = generateRequest(Method.GET_NEW_ADDRESS);
+		Request request = generateRequest(Method.GET_NEW_ADDRESS);
 		
-		return entity.toString();
+		return request.toString();
 	}
 	
-	@RequestMapping(value = "/request/{txId}")
-	public String getByTxId(@PathVariable("txId") String txId) {
-		Request entity = dao.getByTxId(txId);
-		
-		return entity.toString();
-	}
 	
 	private Request generateRequest(Method method) {
 		return generateRequest(method, null);
 	}
 	
 	private Request generateRequest(Method method, JSONObject properties) {
-		Request entity = new Request();
+		Request request = new Request();
 		if(properties != null) {
-			entity.setProperties(properties);
+			request.setProperties(properties);
 		}
-		entity.setStatus(Status.INLINE);
-		entity.setMethod(method);
-		dao.persist(entity);
+		request.setStatus(Status.INLINE);
+		request.setMethod(method);
+		dao.persist(request);
 
-		return entity;
+		return request;
+	}
+	
+	@InitBinder("transactionBinder")
+	protected void transactionBinder(WebDataBinder binder) {
+		binder.addValidators(transactionValidator);
 	}
 
 	@SuppressWarnings("unchecked")

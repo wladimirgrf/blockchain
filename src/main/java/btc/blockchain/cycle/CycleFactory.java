@@ -24,6 +24,7 @@ public class CycleFactory {
 	public void start() {
 		ScheduledExecutorService scheduleExecutorService = Executors.newScheduledThreadPool(THREAD_POOL_LIMIT);
 		scheduleExecutorService.scheduleAtFixedRate(requestCycle, 0, 1, TimeUnit.MINUTES);
+		requestCycle.setScheduleExecutorService(scheduleExecutorService);
 	}
 }
 

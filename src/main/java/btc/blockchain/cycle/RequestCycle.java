@@ -1,13 +1,13 @@
 package btc.blockchain.cycle;
 
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import btc.blockchain.dao.RequestDAO;
 import btc.blockchain.model.Status;
 import btc.blockchain.model.Request;
-import btc.blockchain.rpc.model.Method;
 
 
 public class RequestCycle  implements Runnable {
@@ -20,6 +20,12 @@ public class RequestCycle  implements Runnable {
 
 	@Autowired
 	private RequestDAO dao;
+	
+	private ScheduledExecutorService scheduleExecutorService;
+	
+	public void setScheduleExecutorService(ScheduledExecutorService scheduleExecutorService) {
+		this.scheduleExecutorService = scheduleExecutorService;
+	}
 
 
 	@Override
@@ -29,6 +35,10 @@ public class RequestCycle  implements Runnable {
 
 			if(requests == null) {
 				System.out.println("No request");
+				
+
+				scheduleExecutorService.shutdown();
+				
 				return;
 			}
 
@@ -38,24 +48,28 @@ public class RequestCycle  implements Runnable {
 
 			System.out.println(request.toString());
 
-			if(request.getMethod() == Method.SEND_FROM) {
+			switch (request.getMethod()) {
+			case SEND_FROM:
 				transactionCycle.prepareToSend(request);
-			} else if(request.getMethod() == Method.GET_RECEIVED_BY_ADDRESS) {
+				break;
+			case GET_RECEIVED_BY_ADDRESS:
 				walletCycle.prepareToGetBalance(request);
-			} else if(request.getMethod() == Method.GET_NEW_ADDRESS) {
+				break;
+			case GET_NEW_ADDRESS:
 				walletCycle.prepareToCreate(request);
-			} else {
+				break;
+			default:
 				request.setStatus(Status.ERROR);
+				break;
 			}
 
+			System.out.println(request.toString());
 			dao.merge(request);
+			
+			
 
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-
-
-
 }

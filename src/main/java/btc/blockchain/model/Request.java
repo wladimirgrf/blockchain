@@ -96,7 +96,7 @@ public class Request implements Serializable{
 		JSONObject request = new JSONObject();
 		request.put("txId", txId);
 		request.put("status", status);
-		request.put("result", result);
+		request.put("result", (result != null ? result.toJSONString() : null));
         
         return  request.toJSONString();
     }

@@ -1,5 +1,6 @@
 package btc.blockchain.cycle;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,10 @@ import btc.blockchain.model.Request;
 import btc.blockchain.model.Status;
 import btc.blockchain.rpc.controller.WalletController;
 
-public class WalletCycle {
+public class WalletCycle implements Serializable {
 
+	private static final long serialVersionUID = -4911651596943465112L;
+	
 	@Autowired
 	private WalletController controller;
 	
@@ -19,7 +22,7 @@ public class WalletCycle {
 	public void prepareToCreate(Request request) {
 		JSONObject result = controller.create(request.getId());
 		
-		if(result.containsKey("error")) {
+		if(result.containsKey("error") && result.get("error") != null) {
 			request.setStatus(Status.ERROR);
 		} else {
 			request.setStatus(Status.COMPLETED);
@@ -27,7 +30,6 @@ public class WalletCycle {
 		
 		request.setResult(result);
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	public void prepareToGetBalance(Request request) {
@@ -47,7 +49,7 @@ public class WalletCycle {
 			result = controller.balance(address);
 		}
 
-		if(result.containsKey("error")) {
+		if(result.containsKey("error") && result.get("error") != null) {
 			request.setStatus(Status.ERROR);
 		} else {
 			request.setStatus(Status.COMPLETED);

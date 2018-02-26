@@ -5,6 +5,7 @@ public enum Method {
 	//In System
 	GET_NEW_ADDRESS("getnewaddress"),
 	GET_RECEIVED_BY_ADDRESS("getreceivedbyaddress"),
+	GET_RAW_TRANSACTION("getrawtransaction"),
 	SEND_FROM("sendfrom"),
 	IMPORT_PRIV_KEY("importprivkey"),
 	VALIDATE_ADDRESS("validateaddress"),
@@ -17,7 +18,6 @@ public enum Method {
     GET_RECEIVED_BY_ACCOUNT("getreceivedbyaccount"),
     GET_BALANCE("getbalance"),
     GET_TRANSACTION("gettransaction"),
-    GET_RAW_TRANSACTION("getrawtransaction"),
     GET_CONNECTION_COUNT("getconnectioncount"),
     GET_BLOCKCHAIN_INFO("getblockchaininfo"),
     GET_NETWORK_INFO("getnetworkinfo"),
